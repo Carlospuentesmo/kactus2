@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>I.A. UEB</title>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<style>
+  * {
+    font-family: Verdana, Arial, sans-serif;
+  }
+  a:link {
+    color: #000;
+    text-decoration: none;
+  }
+  a:visited {
+    color: #000;
+  }
+  a:hover {
+    color: #33f;
+  }
+  .button {
+    background: -webkit-linear-gradient(top, #03931b 0, #114a03 100%);
+    border: 1px solid #065104;
+    border-radius: 3px;
+    color: #fff;
+    display: none;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.3;
+    padding: 8px 25px;
+    text-align: center;
+    text-shadow: 1px 1px 1px #681495;
+    letter-spacing: normal;
+  }
+  .center {
+    padding: 10px;
+    text-align: center;
+  }
+  .final {
+    color: black;
+    padding-right: 3px;
+  }
+  .interim {
+    color: gray;
+  }
+  .info {
+    font-size: 14px;
+    text-align: center;
+    color: #777;
+    display: none;
+  }
+  .right {
+    float: right;
+  }
+  .sidebyside {
+    display: inline-block;
+    width: 45%;
+    min-height: 40px;
+    text-align: left;
+    vertical-align: top;
+  }
+  #headline {
+    font-size: 40px;
+    font-weight: 300;
+  }
+  #info {
+    font-size: 20px;
+    text-align: center;
+    color: #777;
+    visibility: hidden;
+  }
+  #results {
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid rgb(0, 0, 0);
+    padding: 10px;
+    text-align: left;
+    height: 60px;
+    width: 100%;
+    display: block;
+    background-color: white;
+  }
+  #start_button {
+    border: 0;
+    background-color: transparent;
+    border-radius: 50%;
+    padding: 0;
+  }
+
+  .nav-img-btn-img {
+    border-radius: 50%;
+  }
+  .nav-img-btn-text {
+    max-width: 0;
+    overflow: hidden;
+    margin: auto 0;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .nav-img-btn-div {
+    background-color: #444;
+    border-radius: 20px;
+    margin: 1.5px 5px;
+    display: flex;
+    padding: 5px;
+    height: 40px;
+  }
+
+  .nav-img-btn-div:hover {
+    cursor: pointer;
+  }
+</style>
+
+<nav class="navbar navbar-dark bg-dark" style="max-height: 56px;">
+  <div class="container-fluid">
+    
+    <div class="d-flex">
+      <!-- Plantilla de boton, ej Botton de paypal
+        
+      <div class="nav-img-btn-div" id="nav-img-btn=<redirect url>">
+        <img
+          class="nav-img-btn-img"
+          src="<image>"
+          alt=""
+          width="30"
+          height="30"
+        />
+        <p class="nav-img-btn-text">
+          <Text, si no quieres texto borra esta etiqueta "p">
+        </p>
+      </div>
+
+      -->
+
+      
+
+      
+      <script>
+        const nav_img_btns = document.getElementsByTagName("*");
+        let nav_img_btns$discriminator = "nav-img-btn";
+        
+        for (const doc of nav_img_btns) {
+          let id$list = doc.id.split("=");
+          if (id$list.length < 2 || id$list[0] !== nav_img_btns$discriminator)
+            continue;
+
+          doc.addEventListener("click", function () {
+            window.open(id$list.slice(1).join('='));
+          });
+        }
+
+        for (const doc of nav_img_btns) {
+          if (!doc.classList.value.includes('nav-img-btn-img'))
+            continue;
+
+          const parent = doc.parentElement
+
+          parent.addEventListener("mouseenter", function () {
+            doc.nextElementSibling.style.transition = 'margin .2s, max-width 1s'
+            doc.nextElementSibling.style.maxWidth = '1000px'
+            doc.nextElementSibling.style.margin = 'auto 5px'
+          });
+
+          parent.addEventListener("mouseleave", function () {
+            doc.nextElementSibling.style.transition = 'margin .2s, max-width .2s'
+            doc.nextElementSibling.style.maxWidth = '0'
+            doc.nextElementSibling.style.margin = 'auto 0'
+          });
+        }
+      </script>
+    </div>
+  </div>
+</nav>
+
+<div style="width: 100%; height: calc(100% - 56px); background-color: #434343">
+  <div class="container" style="width: 100%; height: calc(100% - 70px); overflow: hidden;">
+    <img src="./imagenes/placeholder.png" width="100%" id="video-response-img"></img>
+    <video src="./videos/indrive.mp4" type="video/mp4" width="100%" style="display: none;" id="video-response-vid"></video>
+  </div>
+  <div style="width: 100%; height: 70px; overflow: hidden; background-color: #222"><!-- overflow: hidden; --> 
+    <div class="input-group mb-3" style="width: 100%; height: 100%; background: none">
+      <span class="input-group-text" id="basic-addon1" style="background: none; border: none"">
+        <div id="info">
+          <p id="info_start">¡Activa el microfono!.</p>
+          <p id="info_speak_now">Ahora habla, te escucho..</p>
+          <p id="info_no_speech">
+            No te escucho, configuralo.
+            <a
+              href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892"
+            >
+              Configuración de microfono</a
+            >.
+          </p>
+          <p id="info_no_microphone" style="display: none;">
+            No microphone was found. Ensure that a microphone is installed and that
+            <a
+              href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892"
+            >
+              Configuración de microfono</a
+            >
+            are configured correctly.
+          </p>
+          <p id="info_allow">Clickea en "si" para dar permiso para poder escucharte.</p>
+          <p id="info_denied">Permiso para activar microfono denegado.</p>
+          <p id="info_blocked">
+            Permission to use microphone is blocked. To change, go to
+            chrome://settings/contentExceptions#media-stream
+          </p>
+          <p id="info_upgrade">
+            Tu navegador no es compatible con esta API. Instala la nueva version de
+            <a href="//www.google.com/chrome">Chrome</a> version 25 o superior.
+          </p>
+        </div>
+      </span>
+      <span class="form-control" id="basic-addon1" style="background: none; border: none"">
+        <div id="results">
+          <span id="final_span" class="final"></span>
+          <span id="interim_span" class="interim"></span>
+          <p></p>
+        </div>
+      </span>
+      <span class="input-group-text" id="basic-addon1" style="background: none; border: none">
+        <button id="start_button" onclick="startButton(event)">
+          <img id="start_img" src="mic.gif" alt="Start" />
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+
+
+<select id="select_language" style="width: 40%; display: none;" onchange="updateCountry()"></select>
+<select id="select_dialect" style="width: 40%; display: none;"></select>
+
+<p
+  id="easterEgg-control"
+  style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -250px;
+    font-size: 100px;
+    display: none;
+    text-align: center;
+    color: #f00;
+    filter: brightness(0);
+  "
+>
+  <span>Combo x</span><span id="easterEgg-combo">0</span><br />
+  <span
+    style="
+      color: green;
+      filter: brightness(1);
+      font-weight: bold;
+      font-size: 20px;
+    "
+    >¡Combo exacto de x150 para un secreto muy secreto!</span
+  ><br />
+  <span
+    style="
+      color: gray;
+      filter: brightness(1);
+      font-weight: bold;
+      font-size: 20px;
+    "
+    >@IBlazingX and @Carlosdiamon188 on Twitter</span 
+  >
+</p>
+
+<script>
+  var langs = [
+    ["Afrikaans", ["af-ZA"]],
+    ["Bahasa Indonesia", ["id-ID"]],
+    ["Bahasa Melayu", ["ms-MY"]],
+    ["Català", ["ca-ES"]],
+    ["Čeština", ["cs-CZ"]],
+    ["Deutsch", ["de-DE"]],
+    [
+      "English",
+      ["en-AU", "Australia"],
+      ["en-CA", "Canada"],
+      ["en-IN", "India"],
+      ["en-NZ", "New Zealand"],
+      ["en-ZA", "South Africa"],
+      ["en-GB", "United Kingdom"],
+      ["en-US", "United States"]
+    ],
+    [
+      "Español",
+      ["es-AR", "Argentina"],
+      ["es-BO", "Bolivia"],
+      ["es-CL", "Chile"],
+      ["es-CO", "Colombia"],
+      ["es-CR", "Costa Rica"],
+      ["es-EC", "Ecuador"],
+      ["es-SV", "El Salvador"],
+      ["es-ES", "España"],
+      ["es-US", "Estados Unidos"],
+      ["es-GT", "Guatemala"],
+      ["es-HN", "Honduras"],
+      ["es-MX", "México"],
+      ["es-NI", "Nicaragua"],
+      ["es-PA", "Panamá"],
+      ["es-PY", "Paraguay"],
+      ["es-PE", "Perú"],
+      ["es-PR", "Puerto Rico"],
+      ["es-DO", "República Dominicana"],
+      ["es-UY", "Uruguay"],
+      ["es-VE", "Venezuela"]
+    ],
+    ["Euskara", ["eu-ES"]],
+    ["Français", ["fr-FR"]],
+    ["Galego", ["gl-ES"]],
+    ["Hrvatski", ["hr_HR"]],
+    ["IsiZulu", ["zu-ZA"]],
+    ["Íslenska", ["is-IS"]],
+    ["Italiano", ["it-IT", "Italia"], ["it-CH", "Svizzera"]],
+    ["Magyar", ["hu-HU"]],
+    ["Nederlands", ["nl-NL"]],
+    ["Norsk bokmål", ["nb-NO"]],
+    ["Polski", ["pl-PL"]],
+    ["Português", ["pt-BR", "Brasil"], ["pt-PT", "Portugal"]],
+    ["Română", ["ro-RO"]],
+    ["Slovenčina", ["sk-SK"]],
+    ["Suomi", ["fi-FI"]],
+    ["Svenska", ["sv-SE"]],
+    ["Türkçe", ["tr-TR"]],
+    ["български", ["bg-BG"]],
+    ["Pусский", ["ru-RU"]],
+    ["Српски", ["sr-RS"]],
+    ["한국어", ["ko-KR"]],
+    [
+      "中文",
+      ["cmn-Hans-CN", "普通话 (中国大陆)"],
+      ["cmn-Hans-HK", "普通话 (香港)"],
+      ["cmn-Hant-TW", "中文 (台灣)"],
+      ["yue-Hant-HK", "粵語 (香港)"]
+    ],
+    ["日本語", ["ja-JP"]],
+    ["Lingua latīna", ["la"]]
+  ];
+
+  for (var i = 0; i < langs.length; i++) {
+    select_language.options[i] = new Option(langs[i][0], i);
+  }
+  select_language.selectedIndex = 7; // Seleccionar idioma POR DEFECTO
+  updateCountry();
+  select_dialect.selectedIndex = 3; //Seleccionar nacionalidad POR DEFECTO
+
+  showInfo("info_start");
+
+  function updateCountry() {
+    for (var i = select_dialect.options.length - 1; i >= 0; i--) {
+      select_dialect.remove(i);
+    }
+    var list = langs[select_language.selectedIndex];
+    for (var i = 1; i < list.length; i++) {
+      select_dialect.options.add(new Option(list[i][1], list[i][0]));
+    }
+    select_dialect.style.visibility =
+      list[1].length == 1 ? "hidden" : "visible";
+  }
+
+  let $image = document.getElementById('video-response-img')
+  let $video = document.getElementById('video-response-vid')
+  let $audio = new Audio(`...`);
+  var final_transcript = "";
+  var recognizing = false;
+  var ignore_onend;
+  var start_timestamp;
+  if (!("webkitSpeechRecognition" in window)) {
+    upgrade();
+  } else {
+    start_button.style.display = "inline-block";
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onstart = function () {
+      recognizing = true;
+      showInfo("info_speak_now");
+      start_img.src = "mic-animate.gif";
+    };
+
+    recognition.onerror = function (event) {
+      if (event.error == "no-speech") {
+        start_img.src = "mic.gif";
+        showInfo("info_no_speech");
+        ignore_onend = true;
+      }
+      if (event.error == "audio-capture") {
+        start_img.src = "mic.gif";
+        showInfo("info_no_microphone");
+        ignore_onend = true;
+      }
+      if (event.error == "not-allowed") {
+        if (event.timeStamp - start_timestamp < 100) {
+          showInfo("info_blocked");
+        } else {
+          showInfo("info_denied");
+        }
+        ignore_onend = true;
+      }
+    };
+
+    recognition.onend = function () {
+      recognizing = false;
+      if (ignore_onend) {
+        return;
+      }
+      start_img.src = "mic.gif";
+      if (!final_transcript) {
+        showInfo("info_start");
+        return;
+      }
+      showInfo("");
+      if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+        var range = document.createRange();
+        range.selectNode(document.getElementById("final_span"));
+        window.getSelection().addRange(range);
+      }
+      botResponse(removeSpecialChars(final_transcript.toLowerCase()));
+    };
+
+    recognition.onresult = function (event) {
+      //resultado final
+      $video.removeAttribute('autoplay')
+      $video.setAttribute('muted', '')
+      $video.src = "..."
+      $video.style.display = 'none'
+      $image.style.display = null
+
+      $audio.pause();
+      $audio.currentTime = 0;
+
+      final_transcript = "";
+      var interim_transcript = "";
+      for (var i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          final_transcript += event.results[i][0].transcript;
+        } else {
+          interim_transcript += event.results[i][0].transcript;
+        }
+      }
+      final_transcript = capitalize(final_transcript);
+      final_span.innerHTML = linebreak(`Usuario: ${final_transcript}`);
+      interim_span.innerHTML = linebreak(interim_transcript);
+    };
+  }
+
+  function upgrade() {
+    start_button.style.visibility = "hidden";
+    showInfo("info_upgrade");
+  }
+
+  var two_line = /\n\n/g;
+  var one_line = /\n/g;
+  function linebreak(s) {
+    return s.replace(two_line, "<p></p>").replace(one_line, "<br>");
+  }
+
+  var first_char = /\S/;
+  function capitalize(s) {
+    return s.replace(first_char, function (m) {
+      return m.toUpperCase();
+    });
+  }
+
+  /**
+   * @param {String} text
+   */
+  function removeSpecialChars(text) { // Remplazar caracteres especiales a normales
+    let newText = "";
+    let specialChars = {
+      a: "áäạàâ".split(""),
+      e: "éëẹèê".split(""),
+      i: "íïịìî".split(""),
+      o: "óöọòô".split(""),
+      u: "úüụùû".split(""),
+      $$$null$$$: [",", "."]
+    };
+
+    for (let char of text.split("")) {
+      let newChar = char;
+
+      for (let key of Object.keys(specialChars)) {
+        let value = specialChars[key];
+
+        if (value.includes(char.toLowerCase())) {
+          let $key = key === "$$$null$$$" ? "" : key;
+
+          newChar = value.includes(char) ? $key : $key.toUpperCase();
+          break;
+        }
+      }
+
+      newText += newChar;
+    }
+
+    return newText;
+  }
+  /**
+   * @param {String} text
+   */
+  function botResponse(text) {
+    console.log(text);
+
+    let response = "";
+    let responses = { // mp3 o mp4 formatos compatibles y IMPORTANTE no usar MAYUSCULAS ni CARACTERES ESPECIALES COMO --->´
+      // Formato -> key: value, ej: "hola-como": ["hola carlos", "carlos", "carlos amigo"]   audio: "test-1.mp3"   lo que tiene que tener la rase que dices: "hola carlos", "carlos", o "carlos amigo"
+      "Adios.mp3": ["adios", "cuidate", "hasta pronto", "nos vemos", "hasta luego"],
+      "Enfermeria.mp3": [
+        ["programa", "enfermeria"],
+        ["hablame", "enfermeria"],
+        ["que es", "enfermeria"]
+      ],
+      "Fundadores.mp3": [
+        ["quienes", "fundadores"],
+        ["que", "fundadores"],
+        ["historia", "fundadores"]
+      ],
+      "Medicina.mp3": [
+        ["programa", "medicina"],
+        ["que", "medicina"],
+        ["hablame", "medicina"]
+      ],
+      "muybien.mp4": [
+        ["como", "estas"],
+        ["estas", "bien"]
+      ],
+      "incorreo.mp4": [
+        ["ingresar", "correo institucional"],
+        ["correo", "universidad"],
+        ["gmail", "universidad"],
+        ["gmail","instituciónal"],
+        ["acceder","correo"],
+        ["ingresar","universidad"]
+      ],
+       "historia.mp4": [
+        ["historia"]
+      ],
+      "cursoingles.mp4": [
+        ["curso", "ingles"]
+      ],
+      "incampus.mp4": [
+        ["ingresar","aula"],
+        ["aula","virtual"],
+        ["mirar","notas"]
+      ],
+      "indrive.mp4": [
+        ["ingresar","drive"],
+        ["google","drive"],
+        "drive"
+      ],
+      "ineventos.mp4": ["evento","eventos"],
+      "inwifi.mp4": ["wi-fi","wifi"],
+      "saludos.mp4": ["hola","buen dia"],
+      "museobiologia.mp4": [
+        ["museo","biologia"],
+        ["encontrar","museo"],
+        ["ubicacion","museo"],
+        ["ubicacion","biologia"]
+      ],
+      "clinicaodon.mp4": [
+        ["donde","clinica"],
+        ["clinica","odontologica"],
+        ["encontrar","odontologica"],
+        ["ubicacion","odontologica"]
+      ],
+      "chiste.mp4": [
+        ["chiste"]
+      ],
+      "creo.mp4": [
+        ["creo"],
+        ["quien","creo"]
+      ],
+      "proposito.mp4": [
+        ["objetivo","laboratorio"],
+        ["proposito","laboratorio"]
+      ],
+      "soluciones.mp4": [
+        ["productos"],
+        ["servicio"],
+        ["solucion"]
+      ],
+      "atenea.mp4": [
+        ["atenea"],
+        ["proyecto","secretaria de salud"],
+        ["proyecto","alma"],
+        ["cervix"]
+      ],
+      "eventosueb.mp4": [
+        ["evento"]
+      ],
+      "fisicanuclear.mp4": [
+        ["fisica","nuclear"]
+      ],
+      "fisicacuantica.mp4": [
+        ["fisica","cuantica"]
+      ],
+      "redesneuronales.mp4": [
+        ["redes","neurona"]
+      ],
+      "facciencias.mp4": [
+        ["programas","facultad","ciencias"]
+      ],
+      "museobiologia.mp4": [
+        ["museo","facultad","ciencias"],
+        ["museo","ciencias"]
+      ],
+      "museobiologia.mp4": [
+        ["museo","facultad","ciencias"],
+        ["museo","ciencias"]
+      ],
+      "himnoueb.mp4": [
+        ["himno"]
+      ],
+      "Bandera.mp4": [
+        ["bandera"]
+      ],
+      "quimicafarma.mp4": [
+        ["quimica farmaceutica"],
+        ["química","farmacéutica"]
+      ],
+       "rectora.mp4": [
+        ["rector"],
+        ["rectora"]
+      ],
+      "adios.mp4": [
+        ["adios"],
+        ["chao"],
+        ["adios muchas gracias"],
+        ["nos vemos"],
+        ["hasta luego"]
+      ],
+      "quekactus.mp4": [
+        ["que es", "kactus"],
+        ["que es", "kactu"],
+        ["qué es", "kactu"],
+        ["que es", "cactus"],
+        ["que es", "cactu"],
+        ["qué es", "cactu"]
+      ],
+      "auto.mp4": [
+      ["que es", "autoservicio"],
+        ["como es", "autoservicio"]
+      ],
+      "ingreso.mp4": [
+      ["ingreso", "autoservicio"],
+      ["acceder", "autoservicio"]
+      ],
+      "docu.mp4": [
+        ["actualizo", "documento"],
+        ["actualizar", "documento"]
+      ],
+      "datos.mp4": [
+      ["actualizo", "dato"],
+      ["actualizar", "dato"]
+      ],
+      "edificioingenieria.mp4": [
+        ["edificio","ingenieria"],
+        ["encontrar","ingenieria"],
+        ["ubicacion","ingenieria"]
+      ]
+
+    };
+
+    for (let key of Object.keys(responses)) {
+      let value = responses[key];
+      let allow;
+
+      for (let val of value) {
+        if (typeof val === "string" && text.indexOf(val) > -1) {
+          allow = true;
+          break;
+        } else if (typeof val === "object") {
+          let temp = text;
+          let count = 0;
+
+          for (let v of val) {
+            // sirve para que respete el orden ["HOLA", "estoy"] y no decte estoy hola.
+            if (temp.indexOf(v) > -1) {
+              temp = temp.slice(temp.indexOf(v));
+              count++;
+            } else break;
+          }
+
+          if (count == val.length) {
+            allow = true;
+            break;
+          }
+        }
+      }
+
+      // Compara el mensaje dado por el usuario entre las KEYS que estan arriba, si cumple entonces va a reproducir un audio (KEY : "MENSAJE","MENSAJE , 2)
+      if (allow) response = key;
+    }
+
+    if (response) {
+      if (response.endsWith('.mp3')) {
+        let $dir = `./audios/${response || ""}`;
+        $audio = new Audio($dir);
+
+        try {
+          // $video.src = "./audios/video.mp4"
+          
+          // $video.setAttribute('autoplay', '')
+          // $video.setAttribute('muted', '')
+          // $video.setAttribute('loop', '')
+          // $video.style.display = null
+          // $image.style.display = 'none'
+
+          $video.removeAttribute('autoplay') // comentar cuando tenga el video de hablar
+          $video.setAttribute('muted', '')
+          $video.src = "..."
+          $video.style.display = 'none'
+          $image.style.display = null
+
+          $audio.play();
+          console.log(`"${$dir}" audio played`);
+        } catch (err) {}
+
+      } else if (response.endsWith('.mp4')) {
+        let $dir = `./videos/${response || ""}`;
+
+        try {
+          $video.src = $dir
+
+          $video.setAttribute('autoplay', '')
+          $video.removeAttribute('muted')
+          $video.removeAttribute('loop')
+          $video.style.display = null
+          $image.style.display = 'none'
+
+          console.log(`"${$dir}" video played`);
+        } catch (err) {}
+      }
+    }
+  }
+
+  function startButton(event) { // Iniciar a grabar la voz
+    if (recognizing) {
+      recognition.stop();
+      return;
+    }
+    final_transcript = ""; // guardar lo que digas
+    recognition.lang = select_dialect.value;
+    recognition.start();
+    ignore_onend = false;
+    final_span.innerHTML = "";
+    interim_span.innerHTML = "";
+    start_img.src = "mic-slash.gif";
+    showInfo("info_allow");
+    start_timestamp = event.timeStamp;
+  }
+
+  function showInfo(s) {
+    if (s) {
+      for (var child = info.firstChild; child; child = child.nextSibling) {
+        if (child.style) {
+          child.style.display = child.id == s ? "inline" : "none";
+        }
+      }
+      info.style.visibility = "visible";
+    } else {
+      info.style.visibility = "hidden";
+    }
+  }
+
+  var current_style; //pequeño secreto dentro del codigo - carlos ;)
+
+  var easterEgg = 0;
+  var delay = new Date();
+  var msDelay = 1000;
+  delay.setTime(delay.getTime() + msDelay);
+
+  document.body.addEventListener("click", function () {
+    const $control = document.getElementById("easterEgg-control");
+    const $combo = document.getElementById("easterEgg-combo");
+
+    let thisDate = new Date();
+    let delayDate = delay;
+
+    if (thisDate.getTime() < delayDate.getTime()) {
+      easterEgg++;
+    } else {
+      if (easterEgg > 0) easterEgg = 0;
+    }
+
+    delay.setTime(thisDate.getTime() + msDelay);
+
+    if (easterEgg > 55)
+      $control.style.transform = `rotate(${
+        Math.random() * (easterEgg / 15 - -(easterEgg / 15) + 1) +
+        -(easterEgg / 15)
+      }deg)`;
+    if (easterEgg > 75)
+      $control.style.transform = `rotate(${
+        Math.random() * (easterEgg / 15 - -(easterEgg / 15) + 1) +
+        -(easterEgg / 15)
+      }deg)`;
+    if (easterEgg > 95)
+      $control.style.transform = `rotate(${
+        Math.random() * (easterEgg / 15 - -(easterEgg / 15) + 1) +
+        -(easterEgg / 15)
+      }deg)`;
+    if (easterEgg > 110)
+      $control.style.transform = `rotate(${
+        Math.random() * (easterEgg / 15 - -(easterEgg / 15) + 1) +
+        -(easterEgg / 15)
+      }deg)`;
+    if (easterEgg > 125)
+      $control.style.transform = `rotate(${
+        Math.random() * (easterEgg / 15 - -(easterEgg / 15) + 1) +
+        -(easterEgg / 15)
+      }deg)`;
+    if (easterEgg >= 50) $control.style.display = null;
+    $combo.textContent = `${easterEgg}`;
+
+    if (easterEgg >= 50)
+      $control.style.filter = `brightness(${(easterEgg - 50) / 800})`;
+
+    setTimeout(function () {
+      let thisDate = new Date();
+      let delayDate = delay;
+
+      if (thisDate.getTime() >= delayDate.getTime()) {
+        const $control = document.getElementById("easterEgg-control");
+
+        $control.style.display = "none";
+        $control.style.transform = null;
+        $control.style.filter = "brightness(0)";
+
+        if (easterEgg == 150)
+          window.open(
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "@IBlazingX and @Carlosdiamon188 on Twitter",
+            "width=1000,height=600"
+          );
+
+        easterEgg = 0;
+      }
+    }, msDelay);
+  });
+</script>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+  crossorigin="anonymous"
+></script>
